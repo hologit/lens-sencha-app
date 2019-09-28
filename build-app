@@ -13,6 +13,7 @@ sencha \
     -Dapp.output.microloader.enable=false \
     -Dbuild.enable.appmanifest=false \
     -Denable.standalone.manifest=true \
+    -Dbuild.timestamp=12345 \
   production \
   build
 
