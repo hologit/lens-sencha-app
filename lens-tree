@@ -9,8 +9,14 @@ INPUT_TREE="${1?<input> required}"
     exit 1;
   fi
 
-  if [ "$(git cat-file -t ${INPUT_TREE}:${HOLOLENS_SENCHA_APP} 2> /dev/null)" != "tree" ]; then
-    echo "hololens.sencha.app '${HOLOLENS_SENCHA_APP}' does not match a top-level subtree of the input tree"
+  if [ -z "${HOLOLENS_SENCHA_WORKSPACE}" ]; then
+    HOLOLENS_SENCHA_WORKSPACE="."
+  fi
+
+  sencha_app_path="${HOLOLENS_SENCHA_WORKSPACE}/${HOLOLENS_SENCHA_APP}"
+
+  if [ "$(git cat-file -t ${INPUT_TREE}:${sencha_app_path} 2> /dev/null)" != "tree" ]; then
+    echo "hololens.sencha.app '${sencha_app_path}' does not match a top-level subtree of the input tree"
     exit 1;
   fi
 
@@ -18,7 +24,7 @@ INPUT_TREE="${1?<input> required}"
   git holo lens export-tree "${INPUT_TREE}"
 
   # execute compilation
-  pushd "${GIT_WORK_TREE}/${HOLOLENS_SENCHA_APP}" > /dev/null
+  pushd "${GIT_WORK_TREE}/${sencha_app_path}" > /dev/null
   build-app
   build_status=$?
   popd > /dev/null
@@ -32,9 +38,9 @@ INPUT_TREE="${1?<input> required}"
   echo -e "\n${HOLOLENS_SENCHA_APP} build completed successfully"
 
   # add output to git index
-  git add "${HOLOLENS_SENCHA_APP}/build"
+  git add "${sencha_app_path}/build"
 
 } 1>&2
 
 # output tree hash
-git write-tree --prefix="${HOLOLENS_SENCHA_APP}/build"
+git write-tree --prefix="${sencha_app_path#./}/build"
