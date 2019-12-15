@@ -14,6 +14,7 @@ sencha \
     -Dbuild.enable.appmanifest=false \
     -Denable.standalone.manifest=true \
     -Dbuild.timestamp=12345 \
+    ${HOLOLENS_SENCHA_ANT_ARGS} \
   production \
   build
 
